@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<title>Votting App</title>
+	  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="/js/d3-tip.js"></script>
+  <link rel="stylesheet" type="text/css" href="/style/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+      	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+         <a class="navbar-brand" href="/">Voting App</a>
+      </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+       <ul class="nav navbar-nav navbar-right">
+          <li class="active"><a href="/">Home</a></li>
+          <% if (displayName  == '') {%>
+          <li><a href="/auth/facebook"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+           <% }else { %>
+           <li><a href="/mypoll">My Polls</a></li>
+           <li><a href="/addnew">New Poll</a></li>
+
+	          <li class="dropdown">
+		        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= displayName %>
+		        <span class="caret"></span></a>
+		        <ul class="dropdown-menu">
+		          <li><a href="/logout">Logout</a></li>
+		          
+		        </ul>
+		      </li>
+           <% }%>
+       </ul>
+        </div>
+    </div>	
+    </nav>
+  <div class="jumbotron">  
+	<%- body %>
+</div>
+ <footer class="text-center"><span>created by <a href="https://www.freecodecamp.org/ngovanhuong94">NgoVanHuong</a></span></footer>
+</body>
+</html>

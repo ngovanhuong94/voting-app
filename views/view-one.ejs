@@ -1,0 +1,141 @@
+<% layout('layout') %>
+
+
+
+
+
+<% if (message.length > 0) {%>
+ <script>
+  var message = '<%= message %>';
+  alert(message)
+ </script>
+<% }%>
+ <div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+     <h2><%= poll.title %></h2>
+      <form method="post" action="/polls/<%= poll._id%>/votechoose">
+           <div class="form-group">
+              <label>Vote</label>
+              <select name="choose" class="form-control">
+
+               <% for(var i=0; i < poll.chooses.length; i++) {%>
+                  <option value="<%= poll.chooses[i].text %>"><%= poll.chooses[i].text %></option>
+               <%}%>
+                
+              </select>
+           </div>
+           <div class="form-group">
+            <button type="submit" class="btn btn-default">Submit</button>
+            
+           </div>
+      </form>
+      <% if(displayName !== '') {%>
+       <button id="addnew" type="button" class="btn btn-default">Add Choose</button>
+      <%}%>
+      <% if(isAuthor) {%>
+       <a href="/polls/<%= poll._id%>/delete"><button  type="button" class="btn btn-default">Remove this poll</button></a>
+      <%}%>
+      <form method="post" action="/polls/<%= poll._id%>/addchoose" class="form-add-choose" style="display: none;">
+        <div class="form-group">
+          <label>Add new choose</label>
+          <input type="text" name="newChoose"/>
+        </div>
+        <div class="form-group">
+           <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+      </form>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://voting-app-free.herokuapp.com/<%= poll._id%>"><button class="btn btn-primary">Share on Facebook</button></a>
+    </div>
+    <div class="col-sm-8 text-center">
+     <div id="chart"></div>
+    </div>
+
+  </div>
+ </div>
+
+ <script>
+   var display = false;
+   $('#addnew').click(function(){
+     if(display == false) {
+      $('.form-add-choose').show();
+      display = true;
+     } else {
+      $('.form-add-choose').hide();
+       display = false;
+     }
+   })
+ </script>
+
+ <script>
+ var pollJSON = JSON.parse('<%- pollJSON %>');
+ console.log(pollJSON);
+ 
+ var dataset = pollJSON.chooses;
+ console.log(dataset)
+
+ var width = 360;
+ var height = 360;
+ var donutWidth = 75;
+ var radius = Math.min(width, height) / 2;
+
+
+ var color = d3.scaleOrdinal(d3.schemeCategory20b);
+ var tip = d3.tip()
+             .attr('class', 'd3-tip')
+             .html(function(d){
+
+                              return "<span>"+d.data.text+"</span><br/><span>voted: "+d.data.voted+"</span>"
+             })
+  var svg = d3.select('#chart')
+              .append('svg')
+               .attr('width', width)
+               .attr('height', height)
+               .append('g')
+               .attr('transform', 'translate(' + (width / 2) +  ',' + (height / 2) + ')');
+   svg.call(tip);            
+ var arc = d3.arc()
+             .innerRadius(radius - donutWidth)
+             .outerRadius(radius);
+ var pie = d3.pie()
+             .value(function(d){return d.voted})
+             .sort(null);
+
+ var path = svg.selectAll('path')
+                .data(pie(dataset))
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', function(d,i){
+                return color(d.data.text)
+                })
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
+                 
+
+
+var legendRectSize = 18;
+var legendSpacing = 4;
+var legend = svg.selectAll('.legend')
+  .data(color.domain())
+  .enter()
+  .append('g')
+  .attr('class', 'legend')
+  .attr('transform', function(d, i) {
+    var height = legendRectSize + legendSpacing;
+    var offset =  height * color.domain().length / 2;
+    var horz = -2 * legendRectSize;
+    var vert = i * height - offset;
+    return 'translate(' + horz + ',' + vert + ')';
+  });
+  legend.append('rect')
+  .attr('width', legendRectSize)
+  .attr('height', legendRectSize)
+  .style('fill', color)
+  .style('stroke', color);
+  legend.append('text')
+  .attr('x', legendRectSize + legendSpacing)
+  .attr('y', legendRectSize - legendSpacing)
+  .text(function(d) { return d; });
+ </script>
+ 
